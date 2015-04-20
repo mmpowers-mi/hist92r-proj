@@ -1,0 +1,89 @@
+# Hist92r Parsing Script
+
+# main() definition--------------------------------------------------------
+def main():
+    # Get t, the number of test cases
+    t, = map(int, raw_input().split())
+
+    # We need to loop for each test case
+    for _ in range(t):
+        # Get leave size, num caterpillars
+        n, m = map(int, raw_input().split())
+
+        # Setup data structures
+
+        # s = 0
+        # inbound = 1
+        # outbound = 2
+        # t = 3
+
+        s = [] # A coordinate of (0, 0, 0) refers to s
+        t = [] # A coordinate of (3, 0, 0) refers to t
+        inbound = [[ [(2, x, y)] for y in range(n)] for x in range(n)] # Edge to relative outbound
+        outbound = [[ [] for _ in range(n)] for _ in range(n)]
+        for y in range(n):
+            for x in range(n):
+                if x == 0 or y == 0 or x == n - 1 or y == n - 1:
+                    outbound[x][y].append((3, 0, 0)) # edge to t
+                else:
+                    outbound[x][y].append((1, x - 1, y)) #edges to surrounding inbounds
+                    outbound[x][y].append((1, x, y - 1))
+                    outbound[x][y].append((1, x + 1, y))
+                    outbound[x][y].append((1, x, y + 1))
+
+        # Read in caterpillar locations
+        for _ in range(m):
+            x, y = map(int, raw_input().split())
+            s.append((1, x - 1, y - 1))
+
+        # Combine all of these into our system
+        system = [[[s]], inbound, outbound, [[t]]]
+
+        # Determine max flow by BFS-ing on our graph until we can't reach t from s anymore
+        mflow = 0
+        q = collections.deque()
+        parents = dict()
+        # Outer loop, this runs for each caterpillar
+        for _ in range(m):
+            z, x, y = 0, 0, 0
+            q.clear() # to-be-visited
+            parents.clear()
+            v = set((z, x, y)) # visited
+            # Initialize queue
+            nexts = system[z][x][y]
+            for a in range(len(nexts)):
+                if nexts[a] not in v:
+                    v.add(nexts[a])
+                    q.append(nexts[a])
+            # Inner loop running BFS
+            while q:
+                # Get the next node to look at
+                z, x, y = q.popleft()
+                # Check if we've reached t - if we have, break, as it's the shortest path
+                if z == 3:
+                    break
+                # Add its edges to the list of paths
+                nexts = system[z][x][y]
+                for a in range(len(nexts)):
+                    if nexts[a] not in v:
+                        v.add(nexts[a])
+                        parents[nexts[a]] = (z, x, y)
+                        q.append(nexts[a])
+            # If a BFS terminates without reaching t, it means we're all done, break
+            if z != 3:
+                break
+            # Loop through path and reverse all edges
+            cz, cx, cy = z, x, y
+            while (cz, cx, cy) in parents:
+                pz, px, py = parents[(cz, cx, cy)]
+                system[cz][cx][cy].append((pz, px, py))
+                system[pz][px][py].remove((cz, cx, cy))
+                cz, cx, cy = pz, px, py
+
+            mflow += 1
+
+        # Output resulting file
+
+# Run program-----------------------------------------------------------
+if __name__ == "__main__":
+    main()
