@@ -7,6 +7,8 @@ import os.path
 def main():
     # Setup our diagnostic dict to determine dist. of num. articles per page
     dist = {}
+    # List of all failed pages (no match found)
+    failures = []
     # For every file in our folder
     for num in range(1, 5300):
         # Read in a file to parse
@@ -28,7 +30,7 @@ def main():
                         articles.append(article)
                     article = []
                     valid = False
-                if levenshtein(word.lower(),"Overseas".lower()) < 3:
+                if abs(len(word) - len("Overseas")) < 4 and levenshtein(word.lower(), "Overseas".lower()) < 3:
                     valid = True
                 article.append(word)
                 alen += 1
@@ -43,6 +45,8 @@ def main():
                     fo.write(w)
                     fo.write(" ")
                 fo.write("\n\n")
+            if not len(articles):
+                failures.append(num)
                 #print a
                 #print
                 #print
@@ -61,6 +65,12 @@ def main():
     print
     for key, value in dist.iteritems():
         print key, "articles:", value
+    print "-----------------------------"
+    print "Failures:"
+    print "----------"
+    for fail in failures:
+        print fail
+    print
 
 # Levenshtein edit distance function definition 
 # Borrowed with permission from:
