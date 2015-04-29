@@ -1,0 +1,13 @@
+Explanation of Failures/Modifications
+
+1478.txt - webpage?
+
+2186.txt - space added
+
+2743.txt - space added
+
+3797.txt - space added
+
+4272.txt - space added
+
+5043.txt - space added
