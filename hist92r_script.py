@@ -32,6 +32,7 @@ def main():
     for num in files:
         # Read in a file to parse
         instr = "input/" + str(num) + ".txt"
+        # Make sure the file exists
         if os.path.isfile(instr):
             fi = open(instr, "r")
             contents = fi.read()
@@ -72,7 +73,7 @@ def main():
                 #print
                 #print
 
-            # Add to our diagnostic dict
+            # Add to our diagnostic dict and print info
             na = len(articles)
             if na in dist:
                 dist[na] = dist[na] + 1
